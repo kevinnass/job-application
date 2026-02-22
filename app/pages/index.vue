@@ -1,61 +1,102 @@
 <template>
-  <div class="space-y-8 animate-fade-in">
-    <!-- Stats Row -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-      <StatCard label="Total" :value="store.stats.total" icon="📋" color="violet" />
-      <StatCard label="Postulées" :value="store.stats.applied" icon="📤" color="blue" />
-      <StatCard label="Entretiens" :value="store.stats.interviews" icon="💬" color="amber" />
-      <StatCard label="Acceptées" :value="store.stats.accepted" icon="✅" color="green" />
-      <StatCard label="Refusées" :value="store.stats.rejected" icon="❌" color="red" />
-    </div>
-
-    <!-- Toolbar -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div class="relative flex-1 max-w-md">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
-        </svg>
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Rechercher une candidature..."
-          class="input-field pl-10"
-        />
+  <div class="space-y-10 animate-fade-in">
+    <!-- Header/Stats Section -->
+    <div class="space-y-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <button @click="showAddModal = true" class="btn-primary flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14" /><path d="M5 12h14" />
+          </svg>
+          Add Application
+        </button>
       </div>
 
-      <button @click="showAddModal = true" class="btn-primary flex items-center gap-2 whitespace-nowrap">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 5v14" /><path d="M5 12h14" />
-        </svg>
-        Ajouter une candidature
-      </button>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <StatCard label="Total" :value="store.stats.total">
+          <template #icon>
+            <div class="p-1.5 rounded-md bg-slate-500/10 text-slate-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            </div>
+          </template>
+        </StatCard>
+        <StatCard label="Postulé" :value="store.stats.applied">
+          <template #icon>
+            <div class="p-1.5 rounded-md bg-blue-500/10 text-blue-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            </div>
+          </template>
+        </StatCard>
+        <StatCard label="Entretiens" :value="store.stats.interviews">
+          <template #icon>
+            <div class="p-1.5 rounded-md bg-orange-500/10 text-orange-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </template>
+        </StatCard>
+        <StatCard label="Accepté" :value="store.stats.accepted">
+          <template #icon>
+            <div class="p-1.5 rounded-md bg-emerald-500/10 text-emerald-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+          </template>
+        </StatCard>
+        <StatCard label="Refusé" :value="store.stats.rejected">
+          <template #icon>
+            <div class="p-1.5 rounded-md bg-red-500/10 text-red-500">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            </div>
+          </template>
+        </StatCard>
+      </div>
     </div>
+ 
+    <!-- Main Content Section -->
+    <div class="space-y-4">
+      <div class="flex items-center gap-4">
+        <div class="relative flex-1 max-w-sm">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+          </svg>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Rechercher une candidature..."
+            class="input-field pl-9 bg-muted/50 border-none h-9 text-xs"
+          />
+        </div>
+      </div>
+ 
+      <!-- Loading -->
+      <div v-if="store.loading && !store.applications.length" class="flex items-center justify-center py-20 border border-dashed rounded-xl">
+        <div class="flex flex-col items-center gap-3">
+          <div class="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <span class="text-xs text-muted-foreground font-medium uppercase tracking-wider">Synchronisation...</span>
+        </div>
+      </div>
+ 
+      <!-- Empty state -->
+      <div v-else-if="!store.applications.length" class="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl space-y-4">
+        <div class="text-3xl grayscale opacity-50">📭</div>
+        <div class="text-center">
+          <h2 class="text-sm font-semibold">Aucune candidature pour le moment</h2>
+          <p class="text-xs text-muted-foreground mt-1">Prêt à commencer votre prochain chapitre ?</p>
+        </div>
+        <button @click="showAddModal = true" class="btn-secondary h-8 text-xs font-bold uppercase tracking-wide">
+          Commencer
+        </button>
+      </div>
 
-    <!-- Loading -->
-    <div v-if="store.loading && !store.applications.length" class="flex justify-center py-16">
-      <svg class="w-8 h-8 text-violet-400 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-      </svg>
+      <!-- Applications Table -->
+      <div v-else class="card border-none bg-transparent shadow-none">
+        <ApplicationTable
+          :applications="filteredApplications"
+          @edit="handleEdit"
+          @delete="handleDelete"
+          @change-status="handleStatusChange"
+        />
+      </div>
     </div>
-
-    <!-- Empty state -->
-    <div v-else-if="!store.applications.length" class="card text-center py-16">
-      <div class="text-5xl mb-4">📭</div>
-      <h2 class="text-xl font-semibold text-white mb-2">Aucune candidature</h2>
-      <p class="text-gray-400 mb-6">Commencez par ajouter votre première candidature !</p>
-      <button @click="showAddModal = true" class="btn-primary">
-        Ajouter une candidature
-      </button>
-    </div>
-
-    <!-- Applications Table -->
-    <ApplicationTable
-      v-else
-      :applications="filteredApplications"
-      @edit="openEditModal"
-      @delete="handleDelete"
-    />
 
     <!-- Modals -->
     <AddApplicationModal
@@ -85,25 +126,38 @@ const filteredApplications = computed(() => {
   const query = searchQuery.value.toLowerCase()
   if (!query) return store.sortedApplications
 
-  return store.sortedApplications.filter(app =>
-    app.company_name.toLowerCase().includes(query) ||
-    app.job_profile.toLowerCase().includes(query) ||
-    app.primary_skills.toLowerCase().includes(query) ||
-    app.status.toLowerCase().includes(query)
-  )
+  return store.sortedApplications.filter(app => {
+    const company = (app.company_name || '').toLowerCase()
+    const profile = (app.job_profile || '').toLowerCase()
+    const skills = (app.primary_skills || '').toLowerCase()
+    const status = (app.status || '').toLowerCase()
+
+    return company.includes(query) ||
+           profile.includes(query) ||
+           skills.includes(query) ||
+           status.includes(query)
+  })
 })
 
 onMounted(() => {
   store.fetchApplications()
 })
 
-function openEditModal(app: JobApplication) {
+function handleEdit(app: JobApplication) {
   editingApplication.value = { ...app }
 }
 
 async function handleDelete(id: string) {
-  if (confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?')) {
+  if (confirm('Voulez-vous vraiment supprimer cette candidature ?')) {
     await store.deleteApplication(id)
+  }
+}
+
+async function handleStatusChange(id: string, status: string) {
+  try {
+    await store.updateApplication(id, { status: status as any })
+  } catch (e) {
+    console.error('Failed to update status inline:', e)
   }
 }
 

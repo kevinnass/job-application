@@ -1,25 +1,30 @@
 <template>
-  <span :class="badgeClasses" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors">
-    <span class="w-1.5 h-1.5 rounded-full" :class="dotClass" />
-    {{ label }}
+  <span 
+    class="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border"
+    :class="styles.bg"
+  >
+    <span class="h-1 w-1 rounded-full" :class="styles.dot" />
+    {{ styles.label }}
   </span>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 const props = defineProps<{
-  status: string
+  status: 'draft' | 'applied' | 'interview' | 'rejected' | 'accepted' | string
 }>()
 
-const statusConfig: Record<string, { label: string; bg: string; text: string; dot: string }> = {
-  draft: { label: 'Brouillon', bg: 'bg-gray-500/20', text: 'text-gray-300', dot: 'bg-gray-400' },
-  applied: { label: 'Postulé', bg: 'bg-blue-500/20', text: 'text-blue-300', dot: 'bg-blue-400' },
-  interview: { label: 'Entretien', bg: 'bg-amber-500/20', text: 'text-amber-300', dot: 'bg-amber-400' },
-  rejected: { label: 'Refusé', bg: 'bg-red-500/20', text: 'text-red-300', dot: 'bg-red-400' },
-  accepted: { label: 'Accepté', bg: 'bg-emerald-500/20', text: 'text-emerald-300', dot: 'bg-emerald-400' },
+const statusConfig: Record<string, { bg: string, dot: string, label: string }> = {
+  draft: { bg: 'bg-muted/50 text-muted-foreground border-border', dot: 'bg-muted-foreground', label: 'Brouillon' },
+  applied: { bg: 'bg-blue-500/10 text-blue-500 border-blue-500/20', dot: 'bg-blue-500', label: 'Postulé' },
+  interview: { bg: 'bg-amber-500/10 text-amber-500 border-amber-500/20', dot: 'bg-amber-500', label: 'Entretien' },
+  rejected: { bg: 'bg-red-500/10 text-red-500 border-red-500/20', dot: 'bg-red-500', label: 'Refusé' },
+  accepted: { bg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', dot: 'bg-emerald-500', label: 'Accepté' },
 }
 
-const config = computed(() => statusConfig[props.status] || statusConfig.draft)
-const label = computed(() => config.value.label)
-const badgeClasses = computed(() => `${config.value.bg} ${config.value.text}`)
-const dotClass = computed(() => config.value.dot)
+const styles = computed(() => {
+  const config = statusConfig[props.status] || statusConfig.draft
+  return config!
+})
 </script>

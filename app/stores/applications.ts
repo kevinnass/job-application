@@ -42,35 +42,54 @@ export const useApplicationsStore = defineStore('applications', () => {
     return { total, applied, interviews, accepted, rejected }
   })
 
+  async function getCurrentUserId() {
+    if (user.value?.id) return user.value.id
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    return authUser?.id || null
+  }
+
   async function fetchApplications() {
-    if (!user.value?.id) return
+    const userId = await getCurrentUserId()
+    if (!userId) {
+      error.value = 'Utilisateur non authentifié (fetch).'
+      return
+    }
     loading.value = true
     error.value = null
     try {
       const { data, error: err } = await supabase
         .from('job_applications')
         .select('*')
-        .eq('user_id', user.value.id)
+        .eq('user_id', userId)
         .order('created_at', { ascending: false })
 
       if (err) throw err
       applications.value = data as JobApplication[]
     } catch (e: any) {
-      error.value = e.message
+      error.value = e.message || 'Impossible de récupérer les candidatures.'
       console.error('Error fetching applications:', e)
+      throw e
     } finally {
       loading.value = false
     }
   }
 
   async function addApplication(app: NewJobApplication) {
-    if (!user.value?.id) return
+    const userId = await getCurrentUserId()
+    if (!userId) {
+      const msg = 'Session introuvable. Veuillez vous reconnecter.'
+      error.value = msg
+      throw new Error(msg)
+    }
     loading.value = true
     error.value = null
     try {
       // Nettoyage de l'objet pour ne pas envoyer d'undefined ou de strings vides
       // pour les champs qui attendent des types spécifiques (ex: dates)
-      const payload: any = { ...app }
+      const payload: any = { 
+        ...app,
+        user_id: userId
+      }
       if (!payload.applied_at) payload.applied_at = null
 
       const { data, error: err } = await supabase
@@ -83,20 +102,33 @@ export const useApplicationsStore = defineStore('applications', () => {
       applications.value.unshift(data as JobApplication)
       return data
     } catch (e: any) {
-      error.value = e.message
+      error.value = e.message || "Erreur lors de l'ajout de la candidature."
       console.error('Error adding application:', e)
+      throw e
     } finally {
       loading.value = false
     }
   }
 
   async function updateApplication(id: string, updates: Partial<JobApplication>) {
+    const userId = await getCurrentUserId()
+    if (!userId) {
+      const msg = 'Session expirée (update).'
+      error.value = msg
+      throw new Error(msg)
+    }
     loading.value = true
     error.value = null
     try {
+      const payload = { 
+        ...updates, 
+        user_id: userId,
+        updated_at: new Date().toISOString() 
+      }
+      
       const { data, error: err } = await supabase
         .from('job_applications')
-        .update({ ...updates, updated_at: new Date().toISOString() })
+        .update(payload as any)
         .eq('id', id)
         .select()
         .single()
@@ -108,8 +140,9 @@ export const useApplicationsStore = defineStore('applications', () => {
       }
       return data
     } catch (e: any) {
-      error.value = e.message
+      error.value = e.message || "Erreur lors de la mise à jour."
       console.error('Error updating application:', e)
+      throw e
     } finally {
       loading.value = false
     }
@@ -127,8 +160,9 @@ export const useApplicationsStore = defineStore('applications', () => {
       if (err) throw err
       applications.value = applications.value.filter(a => a.id !== id)
     } catch (e: any) {
-      error.value = e.message
+      error.value = e.message || "Erreur lors de la suppression."
       console.error('Error deleting application:', e)
+      throw e
     } finally {
       loading.value = false
     }

@@ -11,7 +11,14 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/google-fonts',
+    '@nuxtjs/color-mode',
   ],
+
+  colorMode: {
+    classSuffix: '',
+    preference: 'system',
+    fallback: 'dark',
+  },
 
   supabase: {
     redirectOptions: {
@@ -41,11 +48,10 @@ export default defineNuxtConfig({
     head: {
       title: 'JobTracker — Suivi de Candidatures',
       meta: [
-        { name: 'description', content: 'Application de suivi de candidatures — gérez vos offres d\'emploi facilement.' },
+        { name: 'description', content: 'Gérez et suivez vos candidatures — l\'outil indispensable pour vos recherches d\'emploi.' },
       ],
       htmlAttrs: {
         lang: 'fr',
-        class: 'dark',
       },
     },
     pageTransition: { name: 'page', mode: 'out-in' },

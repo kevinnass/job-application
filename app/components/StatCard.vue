@@ -1,10 +1,14 @@
 <template>
-  <div class="glass rounded-xl p-4 flex items-center gap-3 hover:bg-white/[0.07] transition-all duration-200">
-    <span class="text-2xl">{{ icon }}</span>
-    <div>
-      <p class="text-2xl font-bold text-white">{{ value }}</p>
-      <p class="text-xs text-gray-400">{{ label }}</p>
+  <div class="card p-5 space-y-3 hover:border-foreground/10 transition-colors">
+    <div class="flex items-center justify-between">
+      <span class="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{{ label }}</span>
+      <div class="text-muted-foreground">
+        <slot name="icon">
+          <span class="text-lg opacity-70">{{ icon }}</span>
+        </slot>
+      </div>
     </div>
+    <div class="text-2xl font-semibold tracking-tight">{{ value }}</div>
   </div>
 </template>
 
@@ -12,7 +16,7 @@
 defineProps<{
   label: string
   value: number
-  icon: string
-  color: string
+  icon?: string
+  color?: string
 }>()
 </script>

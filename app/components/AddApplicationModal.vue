@@ -1,97 +1,117 @@
 <template>
   <Teleport to="body">
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="$emit('close')">
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in" @click.self="$emit('close')">
       <!-- Backdrop -->
-      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="$emit('close')" />
+      <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" @click="$emit('close')" />
 
       <!-- Modal -->
-      <div class="relative glass-strong rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-scale-in">
+      <div class="relative card w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
         <!-- Header -->
-        <div class="sticky top-0 glass-strong rounded-t-2xl px-6 py-4 border-b border-white/10 flex items-center justify-between">
-          <h2 class="text-lg font-semibold text-white">Nouvelle candidature</h2>
-          <button @click="$emit('close')" class="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="px-6 py-4 border-b flex items-center justify-between bg-muted/30">
+          <div>
+            <h2 class="text-lg font-semibold tracking-tight">Nouvelle candidature</h2>
+            <p class="text-xs text-muted-foreground">Saisissez les détails de l'opportunité.</p>
+          </div>
+          <button @click="$emit('close')" class="p-2 hover:bg-muted rounded-full transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
             </svg>
           </button>
         </div>
 
-        <!-- Form -->
-        <form @submit.prevent="handleSubmit" class="p-6 space-y-5">
-          <!-- URL -->
-          <div>
-            <label class="input-label">Lien de l'offre</label>
-            <input v-model="form.url" type="url" placeholder="https://..." class="input-field" />
-          </div>
-
-          <!-- Company row -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="input-label">Nom de l'entreprise *</label>
-              <input v-model="form.company_name" type="text" placeholder="Ex: Google" class="input-field" required />
-            </div>
-            <div>
-              <label class="input-label">Salaire proposé</label>
-              <input v-model="form.proposed_salary" type="text" placeholder="Ex: 45-55k€" class="input-field" />
+        <!-- Form Scroll Area -->
+        <div class="flex-1 overflow-y-auto p-6">
+          <div v-if="store.error" class="mb-6 p-3 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <div class="space-y-1">
+              <p class="text-xs font-bold text-red-500 uppercase tracking-wider">Erreur de synchronisation</p>
+              <p class="text-xs text-red-500/80 leading-relaxed">{{ store.error }}</p>
             </div>
           </div>
 
-          <!-- Company Info -->
-          <div>
-            <label class="input-label">Informations sur l'entreprise</label>
-            <textarea v-model="form.company_info" rows="2" placeholder="Secteur, taille, localisation..." class="input-field resize-none" />
-          </div>
-
-          <!-- Profile -->
-          <div>
-            <label class="input-label">Profil recherché</label>
-            <input v-model="form.job_profile" type="text" placeholder="Ex: Développeur Full Stack Senior" class="input-field" />
-          </div>
-
-          <!-- Missions -->
-          <div>
-            <label class="input-label">Missions principales</label>
-            <textarea v-model="form.main_missions" rows="3" placeholder="Décrivez les missions principales du poste..." class="input-field resize-none" />
-          </div>
-
-          <!-- Skills -->
-          <div>
-            <label class="input-label">Compétences primaires recherchées</label>
-            <input v-model="form.primary_skills" type="text" placeholder="Vue.js, TypeScript, Node.js (séparées par des virgules)" class="input-field" />
-          </div>
-
-          <!-- Status & Date -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="input-label">Statut</label>
-              <select v-model="form.status" class="input-field">
-                <option value="draft">Brouillon</option>
-                <option value="applied">Postulé</option>
-                <option value="interview">Entretien</option>
-                <option value="rejected">Refusé</option>
-                <option value="accepted">Accepté</option>
-              </select>
+          <form @submit.prevent="handleSubmit" id="add-app-form" class="space-y-6">
+            <!-- URL -->
+            <div class="space-y-2">
+              <label class="input-label">Lien de l'offre</label>
+              <input v-model="form.url" type="url" placeholder="https://linkedin.com/jobs/..." class="input-field bg-muted/20" />
             </div>
-            <div>
-              <label class="input-label">Postulé le</label>
-              <input v-model="form.applied_at" type="date" class="input-field" />
+
+            <!-- Company row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="input-label">Entreprise *</label>
+                <input v-model="form.company_name" type="text" placeholder="Ex: Stripe" class="input-field" required />
+              </div>
+              <div class="space-y-2">
+                <label class="input-label">Salaire proposé</label>
+                <input v-model="form.proposed_salary" type="text" placeholder="Ex: 50k - 65k€" class="input-field" />
+              </div>
             </div>
-          </div>
 
-          <!-- Feedback -->
-          <div>
-            <label class="input-label">Retour de l'entreprise</label>
-            <textarea v-model="form.company_feedback" rows="2" placeholder="Retour reçu..." class="input-field resize-none" />
-          </div>
+            <!-- Profile -->
+            <div class="space-y-2">
+              <label class="input-label">Poste / Profil recherché</label>
+              <input v-model="form.job_profile" type="text" placeholder="Ex: Product Engineer" class="input-field" />
+            </div>
 
-          <!-- Actions -->
-          <div class="flex items-center justify-end gap-3 pt-2">
-            <button type="button" @click="$emit('close')" class="btn-ghost">Annuler</button>
-            <button type="submit" :disabled="loading" class="btn-primary">
-              {{ loading ? 'Enregistrement...' : 'Enregistrer' }}
-            </button>
-          </div>
-        </form>
+            <!-- Detailed info Grid -->
+            <div class="grid grid-cols-1 gap-6">
+              <div class="space-y-2">
+                <label class="input-label">À propos de l'entreprise</label>
+                <textarea v-model="form.company_info" rows="2" placeholder="Secteur, culture, localisation..." class="input-field min-h-[80px]" />
+              </div>
+              
+              <div class="space-y-2">
+                <label class="input-label">Missions principales</label>
+                <textarea v-model="form.main_missions" rows="3" placeholder="Quels sont les enjeux ?" class="input-field min-h-[100px]" />
+              </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="space-y-2">
+              <label class="input-label">Compétences clés</label>
+              <input v-model="form.primary_skills" type="text" placeholder="React, Node.js, SQL..." class="input-field" />
+              <p class="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Sépaer par des virgules</p>
+            </div>
+
+            <!-- Status & Date -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="input-label">Statut actuel</label>
+                <select v-model="form.status" class="input-field appearance-none bg-muted/20">
+                  <option value="draft">Brouillon</option>
+                  <option value="applied">Postulé</option>
+                  <option value="interview">Entretien</option>
+                  <option value="rejected">Refusé</option>
+                  <option value="accepted">Accepté</option>
+                </select>
+              </div>
+              <div class="space-y-2">
+                <label class="input-label">Date de candidature</label>
+                <input v-model="form.applied_at" type="date" class="input-field" />
+              </div>
+            </div>
+
+            <!-- Feedback -->
+            <div class="space-y-2 pb-6">
+              <label class="input-label">Notes / Retours</label>
+              <textarea v-model="form.company_feedback" rows="2" placeholder="Réponse reçue, ressenti..." class="input-field min-h-[80px]" />
+            </div>
+
+            <!-- Action Button inside form for reliability -->
+            <div class="flex items-center justify-end gap-3 pt-6 border-t sticky bottom-0 bg-background/80 backdrop-blur-md">
+              <button type="button" @click="$emit('close')" class="btn-ghost text-xs font-bold uppercase tracking-widest">
+                Annuler
+              </button>
+              <button type="submit" :disabled="loading" class="btn-primary min-w-[140px]">
+                <span v-if="loading" class="mr-2 h-3 w-3 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                {{ loading ? 'Synchronisation...' : 'Enregistrer' }}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </Teleport>
@@ -120,6 +140,10 @@ const form = reactive({
 })
 
 async function handleSubmit() {
+  if (!form.company_name) {
+    store.error = "Le nom de l'entreprise est obligatoire."
+    return
+  }
   loading.value = true
   try {
     await store.addApplication({
@@ -128,7 +152,7 @@ async function handleSubmit() {
     })
     emit('saved')
   } catch (e) {
-    console.error(e)
+    console.error('Failed to save application:', e)
   } finally {
     loading.value = false
   }
@@ -136,6 +160,7 @@ async function handleSubmit() {
 
 // Close on escape
 onMounted(() => {
+  store.error = null
   const handler = (e: KeyboardEvent) => {
     if (e.key === 'Escape') emit('close')
   }
