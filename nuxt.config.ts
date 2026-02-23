@@ -28,9 +28,10 @@ export default defineNuxtConfig({
       exclude: ['/login', '/confirm'],
       cookieRedirect: false,
     },
-    // Required for SPA mode to work correctly on reload
+    // For SPA mode on Vercel, SSR cookies can sometimes interfere with PKCE
+    useSsrCookies: false,
     cookieOptions: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: !process.dev,
       sameSite: 'lax'
     }
   },
