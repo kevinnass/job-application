@@ -28,6 +28,8 @@ export default defineNuxtConfig({
       exclude: ['/login', '/confirm'],
       cookieRedirect: false,
     },
+    // For SPA (ssr: false): use localStorage for PKCE code_verifier, not cookies
+    useSsrCookies: false,
     cookieOptions: {
       maxAge: 60 * 60 * 8, // 8 hours
       secure: !process.dev,
