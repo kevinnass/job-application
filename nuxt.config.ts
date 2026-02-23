@@ -4,14 +4,6 @@ export default defineNuxtConfig({
 
   ssr: false,
 
-  nitro: {
-    preset: 'static'
-  },
-
-  routeRules: {
-    '/**': { prerender: false }
-  },
-
   devtools: { enabled: true },
 
   modules: [
