@@ -1,10 +1,10 @@
 <template>
   <button 
-    class="card p-5 space-y-3 transition-all text-left w-full border border-transparent"
+    class="card p-5 space-y-3 transition-all text-left w-full relative"
     :class="[
       active 
-        ? 'border-gray-500 bg-secondary/50 shadow-sm' 
-        : 'hover:border-gray-500/50 hover:bg-secondary/20'
+        ? 'ring-2 ring-primary border-primary bg-secondary/80 shadow-md' 
+        : 'hover:border-foreground/20 hover:bg-secondary/40 border-gray-500'
     ]"
   >
     <div class="flex items-center justify-between">
