@@ -23,12 +23,12 @@
         </button>
       </div>
  
-      <p class="px-8 text-center text-xs text-muted-foreground leading-relaxed">
+      <!-- <p class="px-8 text-center text-xs text-muted-foreground leading-relaxed">
         En continuant, vous acceptez nos 
         <a href="#" class="underline underline-offset-4 hover:text-primary">Conditions d'Utilisation</a> 
         et notre 
         <a href="#" class="underline underline-offset-4 hover:text-primary">Politique de Confidentialité</a>.
-      </p>
+      </p> -->
     </div>
   </div>
 </template>

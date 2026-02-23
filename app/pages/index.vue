@@ -4,7 +4,7 @@
     <div class="space-y-6">
       <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <button @click="showAddModal = true" class="btn-primary flex items-center gap-2">
+        <button @click="handleAdd" class="btn-primary flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M12 5v14" /><path d="M5 12h14" />
           </svg>
@@ -82,7 +82,7 @@
           <h2 class="text-sm font-semibold">Aucune candidature pour le moment</h2>
           <p class="text-xs text-muted-foreground mt-1">Prêt à commencer votre prochain chapitre ?</p>
         </div>
-        <button @click="showAddModal = true" class="btn-secondary h-8 text-xs font-bold uppercase tracking-wide">
+        <button @click="handleAdd" class="btn-secondary h-8 text-xs font-bold uppercase tracking-wide">
           Commencer
         </button>
       </div>
@@ -143,22 +143,32 @@ onMounted(() => {
   store.fetchApplications()
 })
 
+const user = useSupabaseUser()
+
 function handleEdit(app: JobApplication) {
+  if (!user.value) return navigateTo('/login')
   editingApplication.value = { ...app }
 }
-
+ 
 async function handleDelete(id: string) {
+  if (!user.value) return navigateTo('/login')
   if (confirm('Voulez-vous vraiment supprimer cette candidature ?')) {
     await store.deleteApplication(id)
   }
 }
-
+ 
 async function handleStatusChange(id: string, status: string) {
+  if (!user.value) return navigateTo('/login')
   try {
     await store.updateApplication(id, { status: status as any })
   } catch (e) {
     console.error('Failed to update status inline:', e)
   }
+}
+
+function handleAdd() {
+  if (!user.value) return navigateTo('/login')
+  showAddModal.value = true
 }
 
 function onApplicationSaved() {

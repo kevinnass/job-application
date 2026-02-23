@@ -8,15 +8,22 @@
         <span class="text-sm font-bold tracking-tight text-foreground uppercase">JobTracker</span>
       </div>
       
-      <div v-if="user" class="flex items-center gap-4">
+      <div class="flex items-center gap-4">
         <ThemeToggle />
-        <div class="flex items-center gap-2 pr-4 border-r border-border">
-          <img v-if="user.user_metadata?.avatar_url" :src="user.user_metadata.avatar_url" alt="Avatar" class="h-6 w-6 rounded-full grayscale hover:grayscale-0 transition-all border border-border" />
-          <span class="text-xs font-medium text-muted-foreground hidden sm:block">{{ user.user_metadata?.full_name || user.email }}</span>
+        
+        <div v-if="user" class="flex items-center gap-4">
+          <div class="flex items-center gap-2 pr-4 border-r border-border">
+            <img v-if="user.user_metadata?.avatar_url" :src="user.user_metadata.avatar_url" alt="Avatar" class="h-6 w-6 rounded-full grayscale hover:grayscale-0 transition-all border border-border" />
+            <span class="text-xs font-medium text-muted-foreground hidden sm:block">{{ user.user_metadata?.full_name || user.email }}</span>
+          </div>
+          <button @click="logout" class="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+            Déconnexion
+          </button>
         </div>
-        <button @click="logout" class="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
-          Déconnexion
-        </button>
+        
+        <NuxtLink v-else to="/login" class="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+          Connexion
+        </NuxtLink>
       </div>
     </div>
   </header>

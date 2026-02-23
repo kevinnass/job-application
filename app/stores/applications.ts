@@ -51,7 +51,8 @@ export const useApplicationsStore = defineStore('applications', () => {
   async function fetchApplications() {
     const userId = await getCurrentUserId()
     if (!userId) {
-      error.value = 'Utilisateur non authentifié (fetch).'
+      // Pas d'erreur, on affiche simplement une liste vide pour les invités
+      applications.value = []
       return
     }
     loading.value = true
