@@ -21,6 +21,8 @@ export default defineNuxtConfig({
   },
 
   supabase: {
+    url: process.env.SUPABASE_URL || 'https://erhalnpgzttnhiilopcp.supabase.co',
+    key: process.env.SUPABASE_KEY || 'sb_publishable_-Gi3ASdyuqDCisD_jCweqQ_oFP4qIQG',
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
@@ -30,6 +32,11 @@ export default defineNuxtConfig({
     },
     // For SPA (ssr: false): use localStorage for PKCE code_verifier, not cookies
     useSsrCookies: false,
+    clientOptions: {
+      auth: {
+        flowType: 'pkce',
+      }
+    },
     cookieOptions: {
       maxAge: 60 * 60 * 8, // 8 hours
       secure: !process.dev,
