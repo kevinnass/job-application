@@ -26,12 +26,13 @@
           <tr
             v-for="app in sortedApplications"
             :key="app.id"
-            class="hover:bg-muted/30 transition-colors group"
+            @click="$emit('view', app)"
+            class="hover:bg-muted/30 transition-colors group cursor-pointer"
           >
             <td class="px-4 py-3 align-middle">
               <div class="flex items-center gap-2">
                 <span class="font-semibold tracking-tight text-foreground">{{ app.company_name || '—' }}</span>
-                <a v-if="app.url" :href="app.url" target="_blank"
+                <a v-if="app.url" :href="app.url" target="_blank" @click.stop
                    class="text-muted-foreground hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
@@ -61,10 +62,10 @@
               <span v-else class="text-muted-foreground text-[10px]">—</span>
             </td>
             <td class="px-4 py-3 text-xs font-mono text-muted-foreground">{{ app.proposed_salary || '—' }}</td>
-            <td class="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap uppercase tracking-tighter">
+            <td @click.stop class="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap uppercase tracking-tighter">
               {{ app.applied_at ? formatDate(app.applied_at) : '—' }}
             </td>
-            <td class="px-4 py-3">
+            <td @click.stop class="px-4 py-3">
               <StatusSelect 
                 :model-value="app.status" 
                 @change="(newStatus) => $emit('changeStatus', app.id, newStatus)" 
@@ -73,12 +74,12 @@
             <td class="px-4 py-3 text-xs text-muted-foreground max-w-[140px] truncate italic">{{ app.company_feedback || '—' }}</td>
             <td class="px-4 py-3 align-middle">
               <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button @click="$emit('edit', app)" class="p-1.5 hover:bg-muted rounded-md transition-colors" title="Edit">
+                <button @click.stop="$emit('edit', app)" class="p-1.5 hover:bg-muted rounded-md transition-colors" title="Edit">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
                   </svg>
                 </button>
-                <button @click="$emit('delete', app.id)" class="p-1.5 hover:bg-destructive/10 rounded-md transition-colors" title="Delete">
+                <button @click.stop="$emit('delete', app)" class="p-1.5 hover:bg-destructive/10 rounded-md transition-colors" title="Delete">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-muted-foreground hover:text-destructive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
                   </svg>
@@ -95,7 +96,8 @@
       <div
         v-for="app in sortedApplications"
         :key="app.id"
-        class="card p-4 space-y-4"
+        @click="$emit('view', app)"
+        class="card p-4 space-y-4 cursor-pointer"
       >
         <div class="flex items-start justify-between">
           <div class="space-y-1">
@@ -104,6 +106,7 @@
           </div>
           <StatusSelect 
             :model-value="app.status" 
+            @click.stop
             @change="(newStatus) => $emit('changeStatus', app.id, newStatus)" 
           />
         </div>
@@ -123,23 +126,24 @@
             {{ app.applied_at ? formatDate(app.applied_at) : 'Non postulé' }}
           </span>
           <div class="flex items-center gap-2">
-            <a v-if="app.url" :href="app.url" target="_blank" class="text-muted-foreground hover:text-primary">
+            <a v-if="app.url" :href="app.url" target="_blank" @click.stop class="text-muted-foreground hover:text-primary">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
               </svg>
             </a>
-            <button @click="$emit('edit', app)" class="p-1 hover:bg-muted rounded border">
+            <button @click.stop="$emit('edit', app)" class="p-1 hover:bg-muted rounded border">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
               </svg>
             </button>
-            <button @click="$emit('delete', app.id)" class="p-1 hover:bg-destructive/10 rounded border">
+            <button @click.stop="$emit('delete', app)" class="p-1 hover:bg-destructive/10 rounded border">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-muted-foreground hover:text-destructive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
               </svg>
             </button>
           </div>
         </div>
+
       </div>
     </div>
   </div>

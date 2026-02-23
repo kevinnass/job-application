@@ -4,12 +4,14 @@
     <div class="space-y-6">
       <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <button @click="handleAdd" class="btn-primary flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M12 5v14" /><path d="M5 12h14" />
-          </svg>
-          Add Application
-        </button>
+        <div class="flex items-center gap-2">
+          <button @click="handleAdd" class="btn-primary flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 5v14" /><path d="M5 12h14" />
+            </svg>
+            Add Application
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -78,7 +80,7 @@
  
     <!-- Main Content Section -->
     <div class="space-y-4">
-      <div class="flex items-center gap-4">
+      <div class="flex items-center justify-between gap-4">
         <div class="relative flex-1 max-w-sm">
           <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
@@ -90,6 +92,19 @@
             class="input-field pl-9 bg-muted/50 border-none h-9 text-xs"
           />
         </div>
+        <button 
+          @click="store.fetchApplications()" 
+          class="flex items-center gap-2 h-9 px-3 hover:bg-muted border border-dashed rounded-lg transition-colors text-muted-foreground text-[10px] font-bold uppercase tracking-wider"
+          :class="{ 'opacity-50 cursor-not-allowed': store.loading }"
+          :disabled="store.loading"
+          title="Rafraîchir les données"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" :class="{ 'animate-spin': store.loading }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.85.83 6.72 2.24L21 8"/>
+            <path d="M21 3v5h-5"/>
+          </svg>
+          Actualiser
+        </button>
       </div>
  
       <!-- Loading -->
@@ -116,8 +131,9 @@
       <div v-else class="card border-none bg-transparent shadow-none">
         <ApplicationTable
           :applications="filteredApplications"
+          @view="handleView"
           @edit="handleEdit"
-          @delete="handleDelete"
+          @delete="confirmDelete"
           @change-status="handleStatusChange"
         />
       </div>
@@ -136,6 +152,20 @@
       @close="editingApplication = null"
       @saved="onApplicationUpdated"
     />
+
+    <ApplicationDetailModal
+      v-if="viewingApplication"
+      :application="viewingApplication"
+      @close="viewingApplication = null"
+      @edit="handleEditFromDetail"
+    />
+
+    <DeleteModal
+      v-if="applicationToDelete"
+      :company-name="applicationToDelete.company_name"
+      @cancel="applicationToDelete = null"
+      @confirm="handleDelete"
+    />
   </div>
 </template>
 
@@ -147,6 +177,8 @@ const searchQuery = ref('')
 const activeFilter = ref<string | null>(null)
 const showAddModal = ref(false)
 const editingApplication = ref<JobApplication | null>(null)
+const viewingApplication = ref<JobApplication | null>(null)
+const applicationToDelete = ref<JobApplication | null>(null)
 
 const filteredApplications = computed(() => {
   let list = store.sortedApplications
@@ -189,16 +221,32 @@ onMounted(() => {
 
 const user = useSupabaseUser()
 
+function handleView(app: JobApplication) {
+  viewingApplication.value = app
+}
+
 function handleEdit(app: JobApplication) {
   if (!user.value) return navigateTo('/login')
   editingApplication.value = { ...app }
 }
+
+function handleEditFromDetail() {
+  if (!viewingApplication.value) return
+  const app = { ...viewingApplication.value }
+  viewingApplication.value = null
+  handleEdit(app)
+}
  
-async function handleDelete(id: string) {
+function confirmDelete(app: JobApplication) {
   if (!user.value) return navigateTo('/login')
-  if (confirm('Voulez-vous vraiment supprimer cette candidature ?')) {
-    await store.deleteApplication(id)
-  }
+  applicationToDelete.value = app
+}
+
+async function handleDelete() {
+  if (!applicationToDelete.value) return
+  const id = applicationToDelete.value.id
+  applicationToDelete.value = null
+  await store.deleteApplication(id)
 }
  
 async function handleStatusChange(id: string, status: string) {
@@ -223,3 +271,4 @@ function onApplicationUpdated() {
   editingApplication.value = null
 }
 </script>
+
