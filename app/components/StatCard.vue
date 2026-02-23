@@ -1,5 +1,12 @@
 <template>
-  <div class="card p-5 space-y-3 hover:border-foreground/10 transition-colors">
+  <button 
+    class="card p-5 space-y-3 transition-all text-left w-full border border-transparent"
+    :class="[
+      active 
+        ? 'border-gray-500 bg-secondary/50 shadow-sm' 
+        : 'hover:border-gray-500/50 hover:bg-secondary/20'
+    ]"
+  >
     <div class="flex items-center justify-between">
       <span class="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{{ label }}</span>
       <div class="text-muted-foreground">
@@ -9,7 +16,7 @@
       </div>
     </div>
     <div class="text-2xl font-semibold tracking-tight">{{ value }}</div>
-  </div>
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -18,5 +25,6 @@ defineProps<{
   value: number
   icon?: string
   color?: string
+  active?: boolean
 }>()
 </script>

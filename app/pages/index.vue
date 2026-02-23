@@ -13,35 +13,60 @@
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-        <StatCard label="Total" :value="store.stats.total">
+        <StatCard 
+          label="Total" 
+          :value="store.stats.total"
+          :active="!activeFilter"
+          @click="toggleFilter(null)"
+        >
           <template #icon>
             <div class="p-1.5 rounded-md bg-slate-500/10 text-slate-500">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
             </div>
           </template>
         </StatCard>
-        <StatCard label="Postulé" :value="store.stats.applied">
+        <StatCard 
+          label="Postulé" 
+          :value="store.stats.applied"
+          :active="activeFilter === 'applied'"
+          @click="toggleFilter('applied')"
+        >
           <template #icon>
             <div class="p-1.5 rounded-md bg-blue-500/10 text-blue-500">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
             </div>
           </template>
         </StatCard>
-        <StatCard label="Entretiens" :value="store.stats.interviews">
+        <StatCard 
+          label="Entretiens" 
+          :value="store.stats.interviews"
+          :active="activeFilter === 'interview'"
+          @click="toggleFilter('interview')"
+        >
           <template #icon>
             <div class="p-1.5 rounded-md bg-orange-500/10 text-orange-500">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </div>
           </template>
         </StatCard>
-        <StatCard label="Accepté" :value="store.stats.accepted">
+        <StatCard 
+          label="Accepté" 
+          :value="store.stats.accepted"
+          :active="activeFilter === 'accepted'"
+          @click="toggleFilter('accepted')"
+        >
           <template #icon>
             <div class="p-1.5 rounded-md bg-emerald-500/10 text-emerald-500">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             </div>
           </template>
         </StatCard>
-        <StatCard label="Refusé" :value="store.stats.rejected">
+        <StatCard 
+          label="Refusé" 
+          :value="store.stats.rejected"
+          :active="activeFilter === 'rejected'"
+          @click="toggleFilter('rejected')"
+        >
           <template #icon>
             <div class="p-1.5 rounded-md bg-red-500/10 text-red-500">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
@@ -119,25 +144,44 @@ import type { JobApplication } from '~/stores/applications'
 
 const store = useApplicationsStore()
 const searchQuery = ref('')
+const activeFilter = ref<string | null>(null)
 const showAddModal = ref(false)
 const editingApplication = ref<JobApplication | null>(null)
 
 const filteredApplications = computed(() => {
+  let list = store.sortedApplications
+
+  // Filter by status if a stat card is selected
+  if (activeFilter.value) {
+    list = list.filter(app => app.status === activeFilter.value)
+  }
+
+  // Filter by search query
   const query = searchQuery.value.toLowerCase()
-  if (!query) return store.sortedApplications
+  if (query) {
+    list = list.filter(app => {
+      const company = (app.company_name || '').toLowerCase()
+      const profile = (app.job_profile || '').toLowerCase()
+      const skills = (app.primary_skills || '').toLowerCase()
+      const status = (app.status || '').toLowerCase()
 
-  return store.sortedApplications.filter(app => {
-    const company = (app.company_name || '').toLowerCase()
-    const profile = (app.job_profile || '').toLowerCase()
-    const skills = (app.primary_skills || '').toLowerCase()
-    const status = (app.status || '').toLowerCase()
+      return company.includes(query) ||
+             profile.includes(query) ||
+             skills.includes(query) ||
+             status.includes(query)
+    })
+  }
 
-    return company.includes(query) ||
-           profile.includes(query) ||
-           skills.includes(query) ||
-           status.includes(query)
-  })
+  return list
 })
+
+function toggleFilter(status: string | null) {
+  if (activeFilter.value === status) {
+    activeFilter.value = null
+  } else {
+    activeFilter.value = status
+  }
+}
 
 onMounted(() => {
   store.fetchApplications()

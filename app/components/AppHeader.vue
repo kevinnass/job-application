@@ -21,7 +21,7 @@
           </button>
         </div>
         
-        <NuxtLink v-else to="/login" class="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+        <NuxtLink v-else to="/login" class="text-xs font-medium underline text-muted-foreground hover:text-foreground transition-colors">
           Connexion
         </NuxtLink>
       </div>
