@@ -28,9 +28,8 @@ export default defineNuxtConfig({
       exclude: ['/login', '/confirm'],
       cookieRedirect: false,
     },
-    // For SPA mode on Vercel, SSR cookies can sometimes interfere with PKCE
-    useSsrCookies: false,
     cookieOptions: {
+      maxAge: 60 * 60 * 8, // 8 hours
       secure: !process.dev,
       sameSite: 'lax'
     }
