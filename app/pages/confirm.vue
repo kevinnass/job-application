@@ -19,11 +19,11 @@ definePageMeta({
 
 const router = useRouter()
 
-onMounted(() => {
-  // Supabase handles the OAuth callback automatically
-  // We just need to wait and redirect
-  setTimeout(() => {
+const user = useSupabaseUser()
+
+watch(user, (newUser) => {
+  if (newUser) {
     router.push('/')
-  }, 1000)
-})
+  }
+}, { immediate: true })
 </script>

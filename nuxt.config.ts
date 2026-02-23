@@ -31,6 +31,7 @@ export default defineNuxtConfig({
     // Required for SPA mode to work correctly on reload
     cookieOptions: {
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
     }
   },
 
