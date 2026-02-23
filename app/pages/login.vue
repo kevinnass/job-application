@@ -40,10 +40,13 @@ const loading = ref(false)
 async function signInWithGoogle() {
   loading.value = true
   try {
+    const redirectTo = `${window.location.origin}/confirm`
+    console.log('Initiating login with redirect to:', redirectTo)
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/confirm`,
+        redirectTo,
       },
     })
     if (error) throw error
