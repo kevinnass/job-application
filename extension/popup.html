@@ -14,20 +14,29 @@
         --radius: 8px;
       }
 
-      body {
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
         width: 320px;
-        padding: 16px;
         margin: 0;
+        padding: 0;
+        background-color: var(--background);
+      }
+
+      body {
+        padding: 16px;
         font-family:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
           Arial, sans-serif;
-        background-color: var(--background);
         color: var(--foreground);
+        min-height: 200px;
       }
 
       .header {
         display: flex;
-        items-center: center;
+        align-items: center;
         gap: 8px;
         margin-bottom: 20px;
       }
@@ -203,7 +212,7 @@
 
       <button id="scrape-btn" class="btn">
         <span id="btn-text">Enregistrer l'offre</span>
-        <span id="btn-loader" class="loader hidden"></span>
+        <span id="btn-loader" class="hidden"></span>
       </button>
       <div id="message"></div>
     </div>

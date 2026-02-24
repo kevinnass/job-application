@@ -33,7 +33,9 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="space-y-1">
             <span class="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Salaire Proposé</span>
-            <p class="text-sm font-medium">{{ application.proposed_salary || 'Non spécifié' }}</p>
+            <p class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+              {{ formatProposedSalary(application.proposed_salary) }}
+            </p>
           </div>
           <div class="space-y-1">
             <span class="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Date de candidature</span>
@@ -57,8 +59,8 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
               Missions & Enjeux
             </h3>
-            <div class="text-sm text-foreground leading-relaxed bg-muted/30 p-4 rounded-xl border border-dashed whitespace-pre-wrap">
-              {{ application.main_missions || 'Aucun détail renseigné.' }}
+            <div class="text-sm text-foreground leading-relaxed bg-muted/30 p-4 rounded-xl border border-dashed whitespace-pre-wrap min-h-[100px]">
+              {{ formatMissions(application.main_missions) }}
             </div>
           </div>
 
@@ -69,13 +71,13 @@
               Compétences Clés
             </h3>
             <div class="flex flex-wrap gap-2">
-              <template v-if="application.primary_skills">
+              <template v-if="application.primary_skills && formatSkills(application.primary_skills).length > 0">
                 <span 
-                  v-for="skill in application.primary_skills.split(',')" 
+                  v-for="skill in formatSkills(application.primary_skills)" 
                   :key="skill"
                   class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-secondary text-secondary-foreground rounded-lg border"
                 >
-                  {{ skill.trim() }}
+                  {{ skill }}
                 </span>
               </template>
               <span v-else class="text-sm text-muted-foreground">Aucune compétence listée.</span>
@@ -98,7 +100,7 @@
         <div v-if="application.company_info" class="space-y-3 pt-4 border-t">
           <h3 class="text-xs font-bold uppercase tracking-widest text-muted-foreground">À propos de l'entreprise</h3>
           <p class="text-xs text-muted-foreground leading-relaxed">
-            {{ application.company_info }}
+            {{ formatCompanyInfo(application.company_info) }}
           </p>
         </div>
       </div>
@@ -114,6 +116,12 @@
 
 <script setup lang="ts">
 import type { JobApplication } from '~/stores/applications'
+import { 
+  formatProposedSalary, 
+  formatSkills, 
+  formatCompanyInfo, 
+  formatMissions 
+} from '~/utils/formatters'
 
 defineProps<{
   application: JobApplication

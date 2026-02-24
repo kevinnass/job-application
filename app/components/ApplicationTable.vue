@@ -31,7 +31,7 @@
           >
             <td class="px-4 py-3 align-middle">
               <div class="flex items-center gap-2">
-                <span class="font-semibold tracking-tight text-foreground">{{ app.company_name || '—' }}</span>
+                <span class="font-semibold tracking-tight text-foreground truncate max-w-[120px]">{{ app.company_name || '—' }}</span>
                 <a v-if="app.url" :href="app.url" target="_blank" @click.stop
                    class="text-muted-foreground hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -40,29 +40,35 @@
                 </a>
               </div>
             </td>
-            <td class="px-4 py-3 text-xs text-muted-foreground max-w-[180px] truncate">{{ app.company_info || '—' }}</td>
-            <td class="px-4 py-3 text-xs font-medium">{{ app.job_profile || '—' }}</td>
-            <td class="px-4 py-3 text-xs text-muted-foreground max-w-[180px] truncate font-mono">{{ app.main_missions || '—' }}</td>
+            <td class="px-4 py-3 text-[11px] text-muted-foreground max-w-[150px] truncate">
+              {{ formatCompanyInfo(app.company_info) }}
+            </td>
+            <td class="px-4 py-3 text-[11px] font-medium max-w-[140px] truncate">{{ app.job_profile || '—' }}</td>
+            <td class="px-4 py-3 text-[11px] text-muted-foreground max-w-[150px] truncate">
+              {{ formatMissions(app.main_missions) }}
+            </td>
             <td class="px-4 py-3">
               <div v-if="app.primary_skills" class="flex flex-wrap gap-1">
                 <span
-                  v-for="skill in app.primary_skills.split(',').slice(0, 2)"
+                  v-for="skill in formatSkills(app.primary_skills).slice(0, 2)"
                   :key="skill"
-                  class="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-secondary text-secondary-foreground rounded border"
+                  class="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-secondary text-secondary-foreground rounded border whitespace-nowrap"
                 >
-                  {{ skill.trim() }}
+                  {{ skill }}
                 </span>
                 <span
-                  v-if="app.primary_skills.split(',').length > 2"
-                  class="px-1.5 py-0.5 text-[9px] font-bold text-muted-foreground"
+                  v-if="formatSkills(app.primary_skills).length > 2"
+                  class="px-1 py-0.5 text-[9px] font-bold text-muted-foreground"
                 >
-                  +{{ app.primary_skills.split(',').length - 2 }}
+                  +{{ formatSkills(app.primary_skills).length - 2 }}
                 </span>
               </div>
               <span v-else class="text-muted-foreground text-[10px]">—</span>
             </td>
-            <td class="px-4 py-3 text-xs font-mono text-muted-foreground">{{ app.proposed_salary || '—' }}</td>
-            <td @click.stop class="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap uppercase tracking-tighter">
+            <td class="px-4 py-3 text-[11px] font-semibold text-muted-foreground">
+              {{ formatProposedSalary(app.proposed_salary) }}
+            </td>
+            <td @click.stop class="px-4 py-3 text-[10px] text-muted-foreground whitespace-nowrap uppercase tracking-tighter">
               {{ app.applied_at ? formatDate(app.applied_at) : '—' }}
             </td>
             <td @click.stop class="px-4 py-3">
@@ -71,7 +77,7 @@
                 @change="(newStatus) => $emit('changeStatus', app.id, newStatus)" 
               />
             </td>
-            <td class="px-4 py-3 text-xs text-muted-foreground max-w-[140px] truncate italic">{{ app.company_feedback || '—' }}</td>
+            <td class="px-4 py-3 text-[11px] text-muted-foreground max-w-[140px] truncate italic">{{ app.company_feedback || '—' }}</td>
             <td class="px-4 py-3 align-middle">
               <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button @click.stop="$emit('edit', app)" class="p-1.5 hover:bg-muted rounded-md transition-colors" title="Edit">
@@ -113,18 +119,23 @@
 
         <div v-if="app.primary_skills" class="flex flex-wrap gap-1">
           <span
-            v-for="skill in app.primary_skills.split(',').slice(0, 3)"
+            v-for="skill in formatSkills(app.primary_skills).slice(0, 3)"
             :key="skill"
             class="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-secondary text-secondary-foreground rounded border"
           >
-            {{ skill.trim() }}
+            {{ skill }}
           </span>
         </div>
 
         <div class="flex items-center justify-between pt-2 border-t">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            {{ app.applied_at ? formatDate(app.applied_at) : 'Non postulé' }}
-          </span>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              {{ app.applied_at ? formatDate(app.applied_at) : 'Non postulé' }}
+            </span>
+            <span v-if="app.proposed_salary" class="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+              {{ formatProposedSalary(app.proposed_salary) }}
+            </span>
+          </div>
           <div class="flex items-center gap-2">
             <a v-if="app.url" :href="app.url" target="_blank" @click.stop class="text-muted-foreground hover:text-primary">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -151,6 +162,12 @@
 
 <script setup lang="ts">
 import type { JobApplication } from '~/stores/applications'
+import { 
+  formatProposedSalary, 
+  formatSkills, 
+  formatCompanyInfo, 
+  formatMissions 
+} from '~/utils/formatters'
 
 const props = defineProps<{
   applications: JobApplication[]
@@ -158,8 +175,9 @@ const props = defineProps<{
 
 defineEmits<{
   edit: [app: JobApplication]
-  delete: [id: string]
+  delete: [app: JobApplication]
   changeStatus: [id: string, status: string]
+  view: [app: JobApplication]
 }>()
 
 const sortBy = ref<string>('created_at')
