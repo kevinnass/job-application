@@ -1,75 +1,53 @@
-# Nuxt Minimal Starter
+# JobTracker 📋
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Application web de suivi de candidatures pour centraliser et gérer ses recherches d'emploi.
 
-## Setup
+## Stack
 
-Make sure to install dependencies:
+- **Frontend** — Nuxt 4, Vue 3, Tailwind CSS, Pinia
+- **Backend** — Supabase (Auth, PostgreSQL, Edge Functions)
+- **IA** — Groq (LLaMA 3.1) pour l'analyse automatique d'offres d'emploi
+- **Extension** — Chrome extension pour capturer des offres depuis n'importe quel site
+- **Déploiement** — Vercel
+
+## Fonctionnalités
+
+- 🔐 Authentification (Supabase Auth, PKCE)
+- 📊 Dashboard avec stats par statut (brouillon, postulé, entretien, accepté, refusé)
+- ➕ Ajout / édition / suppression de candidatures
+- 🔍 Recherche et filtrage par statut, entreprise, compétences
+- 🤖 Analyse automatique d'offres via IA (extraction entreprise, poste, salaire, missions, compétences)
+- 🧩 Extension Chrome pour scraper et sauvegarder des offres en un clic
+- 🌙 Mode sombre / clair (préférence système)
+
+## Installation
 
 ```bash
-# npm
-npm install
+# Cloner le repo
+git clone https://github.com/kevinnass/job-application.git
+cd job-application
 
-# pnpm
+# Installer les dépendances
 pnpm install
 
-# yarn
-yarn install
+# Configurer les variables d'environnement
+cp .env.example .env
 
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
+# Lancer en dev
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+## Base de données
 
-Build the application for production:
+Exécuter le fichier `supabase/schema.sql` dans l'éditeur SQL de Supabase pour créer la table `job_applications` avec les policies RLS.
 
-```bash
-# npm
-npm run build
+## Extension Chrome
 
-# pnpm
-pnpm build
+1. Ouvrir `chrome://extensions`
+2. Activer le mode développeur
+3. Charger le dossier `extension/` comme extension non empaquetée
+4. Naviguer sur une offre d'emploi et cliquer sur l'extension pour la capturer
 
-# yarn
-yarn build
+## License
 
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+MIT
