@@ -39,7 +39,7 @@
                 </div>
                 <div class="min-w-0">
                   <span class="font-bold text-[13px] text-foreground block truncate max-w-[140px]">{{ app.company_name || '—' }}</span>
-                  <span class="text-[11px] text-muted-foreground truncate block max-w-[140px]">{{ app.job_profile || '' }}</span>
+                  <span class="text-[12px] block max-w-[140px]">{{ app.job_profile || '' }}</span>
                 </div>
                 <a v-if="app.url" :href="app.url" target="_blank" @click.stop
                    class="text-muted-foreground/40 hover:text-primary opacity-0 group-hover:opacity-100 transition-all ml-auto">
@@ -56,7 +56,7 @@
               </p>
             </td>
             <!-- Compétences -->
-            <td class="px-5 py-4 align-middle">
+            <td class="py-4 align-middle">
               <div v-if="app.primary_skills" class="flex flex-wrap items-center gap-1.5">
                 <span
                   v-for="skill in formatSkills(app.primary_skills).slice(0, 3)"
@@ -75,10 +75,16 @@
               <span v-else class="text-muted-foreground/40 text-xs">—</span>
             </td>
             <!-- Salaire -->
-            <td class="px-5 py-4 align-middle">
-              <span class="text-[13px] font-bold text-emerald-600 dark:text-emerald-400">
-                {{ formatProposedSalary(app.proposed_salary) }}
-              </span>
+            <td class="px-4 py-4 align-middle">
+              <div v-if="app.proposed_salary" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>
+                </svg>
+                <span class="text-[12px] font-bold whitespace-nowrap">
+                  {{ formatProposedSalary(app.proposed_salary) }}
+                </span>
+              </div>
+              <span v-else class="text-muted-foreground/40 text-xs">—</span>
             </td>
             <!-- Date -->
             <td @click.stop class="px-5 py-4 align-middle whitespace-nowrap">
@@ -151,9 +157,15 @@
         <!-- Bottom row: salary + date + actions -->
         <div class="flex items-center justify-between pt-2 border-t border-border/30">
           <div class="flex items-center gap-4">
-            <span class="text-[13px] font-bold text-emerald-600 dark:text-emerald-400">
-              {{ formatProposedSalary(app.proposed_salary) }}
-            </span>
+            <div v-if="app.proposed_salary" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>
+              </svg>
+              <span class="text-[12px] font-bold whitespace-nowrap">
+                {{ formatProposedSalary(app.proposed_salary) }}
+              </span>
+            </div>
+            <span v-else class="text-muted-foreground/40 text-xs">—</span>
             <span class="text-[11px] font-medium text-muted-foreground">
               {{ app.applied_at ? formatDate(app.applied_at) : 'Non postulé' }}
             </span>
