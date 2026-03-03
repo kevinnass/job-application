@@ -50,14 +50,14 @@
               </div>
             </td>
             <!-- Missions -->
-            <td class="px-5 py-4 max-w-[200px]">
-              <p class="text-[12px] text-foreground/70 leading-snug line-clamp-2">
+            <td class="px-5 py-4 align-middle min-w-[250px] max-w-[350px] w-[30%]">
+              <p class="text-[13px] text-foreground/90 leading-relaxed line-clamp-3">
                 {{ formatMissions(app.main_missions) }}
               </p>
             </td>
             <!-- Compétences -->
-            <td class="px-5 py-4">
-              <div v-if="app.primary_skills" class="flex flex-wrap gap-1.5">
+            <td class="px-5 py-4 align-middle">
+              <div v-if="app.primary_skills" class="flex flex-wrap items-center gap-1.5">
                 <span
                   v-for="skill in formatSkills(app.primary_skills).slice(0, 3)"
                   :key="skill"
@@ -75,19 +75,19 @@
               <span v-else class="text-muted-foreground/40 text-xs">—</span>
             </td>
             <!-- Salaire -->
-            <td class="px-5 py-4">
+            <td class="px-5 py-4 align-middle">
               <span class="text-[13px] font-bold text-emerald-600 dark:text-emerald-400">
                 {{ formatProposedSalary(app.proposed_salary) }}
               </span>
             </td>
             <!-- Date -->
-            <td @click.stop class="px-5 py-4 whitespace-nowrap">
+            <td @click.stop class="px-5 py-4 align-middle whitespace-nowrap">
               <span class="text-[12px] font-medium text-foreground/60">
                 {{ app.applied_at ? formatDate(app.applied_at) : '—' }}
               </span>
             </td>
             <!-- Statut -->
-            <td @click.stop class="px-5 py-4">
+            <td @click.stop class="px-5 py-4 align-middle">
               <StatusSelect
                 :model-value="app.status"
                 @change="(newStatus) => $emit('changeStatus', app.id, newStatus)"
@@ -262,12 +262,3 @@ function getMonogramColor(status: string) {
   return colors[status] || colors.draft
 }
 </script>
-
-<style scoped>
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>
