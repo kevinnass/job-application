@@ -14,7 +14,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
     isLogged = !!data.session
   }
 
-  if (!isLogged && to.path !== '/' && to.path !== '/login' && to.path !== '/confirm') {
+  const publicPaths = ['/', '/login', '/confirm', '/privacy']
+  if (!isLogged && !publicPaths.includes(to.path)) {
     return navigateTo('/login')
   }
 

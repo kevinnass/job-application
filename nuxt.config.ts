@@ -27,7 +27,7 @@ export default defineNuxtConfig({
       login: '/login',
       callback: '/confirm',
       include: undefined,
-      exclude: ['/login', '/confirm', '/'],
+      exclude: ['/login', '/confirm', '/', '/privacy'],
       cookieRedirect: false,
     },
     // For SPA (ssr: false): use localStorage for PKCE code_verifier, not cookies
